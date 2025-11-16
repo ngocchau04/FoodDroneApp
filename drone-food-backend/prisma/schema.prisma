@@ -1,0 +1,160 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ======================
+// ENUMS
+// ======================
+enum Role {
+  ADMIN_SV
+  RESTAURANT
+  CUSTOMER
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  ASSIGNED_DRONE
+  DELIVERING
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentProvider {
+  MOMO
+  VNPAY
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+// ======================
+// USER
+// ======================
+model User {
+  id           Int         @id @default(autoincrement())
+  email        String      @unique
+  password     String
+  fullName     String
+  role         Role
+  restaurantId Int?
+  restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
+
+  orders Order[] @relation("CustomerOrders")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ======================
+// RESTAURANT
+// ======================
+model Restaurant {
+  id       Int     @id @default(autoincrement())
+  name     String
+  address  String
+  lat      Float
+  lng      Float
+  phone    String
+  isActive Boolean @default(true)
+
+  menuItems MenuItem[]
+  orders    Order[]
+  users     User[] // <--- back relation cho User.restaurant
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ======================
+// MENU ITEM
+// ======================
+model MenuItem {
+  id           Int        @id @default(autoincrement())
+  restaurantId Int
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  name         String
+  description  String?
+  price        Int
+  imageUrl     String?
+  isAvailable  Boolean    @default(true)
+
+  orderItems OrderItem[]
+}
+
+// ======================
+// ORDER
+// ======================
+model Order {
+  id           Int         @id @default(autoincrement())
+  customerId   Int
+  restaurantId Int
+  totalAmount  Int
+  status       OrderStatus @default(PENDING)
+  deliveryCode String?
+  paymentCode  String?
+
+  customer   User        @relation("CustomerOrders", fields: [customerId], references: [id])
+  restaurant Restaurant  @relation(fields: [restaurantId], references: [id])
+  items      OrderItem[]
+  payment    Payment? // quan hệ 1-1, PK nằm bên Payment
+  tracking   Tracking[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ======================
+// ORDER ITEM
+// ======================
+model OrderItem {
+  id         Int @id @default(autoincrement())
+  orderId    Int
+  menuItemId Int
+  quantity   Int
+  unitPrice  Int
+
+  order    Order    @relation(fields: [orderId], references: [id])
+  menuItem MenuItem @relation(fields: [menuItemId], references: [id])
+}
+
+// ======================
+// PAYMENT (1-1 với ORDER)
+// ======================
+model Payment {
+  id          Int           @id @default(autoincrement())
+  orderId     Int           @unique // <-- THÊM @unique Ở ĐÂY
+  amount      Float
+  method      PaymentMethod
+  status      PaymentStatus @default(PENDING)
+  paymentCode String?
+  createdAt   DateTime      @default(now())
+  order       Order         @relation(fields: [orderId], references: [id])
+}
+
+enum PaymentMethod {
+  MOMO
+  VNPAY
+}
+
+// ======================
+// TRACKING
+// ======================
+model Tracking {
+  id        Int      @id @default(autoincrement())
+  orderId   Int
+  status    String
+  lat       Float
+  lng       Float
+  createdAt DateTime @default(now())
+
+  order Order @relation(fields: [orderId], references: [id])
+}
