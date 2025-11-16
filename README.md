@@ -156,11 +156,11 @@ This project is licensed under the MIT License.
 
 ## 👥 Team
 
-- **Backend Developer**: [Your Name]
-- **Mobile Developer**: [Your Name]
-- **UI/UX Designer**: [Your Name]
+- **Backend Developer**: ngocchau04
+- **Mobile Developer**: ngocchau04
+- **UI/UX Designer**: ngocchau04
 
 ## 📞 Contact
 
-- Email: your.email@example.com
-- Project Link: [https://github.com/yourusername/FoodDroneApp](https://github.com/yourusername/FoodDroneApp)
+- GitHub: @ngocchau04
+- Project Link: [https://github.com/ngocchau04/FoodDroneApp](https://github.com/ngocchau04/FoodDroneApp)
