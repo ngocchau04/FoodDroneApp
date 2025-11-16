@@ -20,44 +20,55 @@ export const CartScreen: React.FC<Props> = ({ navigation }) => {
 
   const handleCreateOrder = async () => {
     if (!restaurantId || items.length === 0) {
-      Alert.alert('Giỏ hàng trống', 'Hãy chọn món trước khi đặt.');
-      return;
+        Alert.alert('Giỏ hàng trống', 'Hãy chọn món trước khi đặt.');
+        return;
     }
 
     try {
-      setSubmitting(true);
+        setSubmitting(true);
 
-      const payload = {
+        const payload = {
         restaurantId,
         totalAmount,
         items: items.map((i) => ({
-          menuItemId: i.menuItem.id,
-          quantity: i.quantity,
-          unitPrice: i.menuItem.price,
+            menuItemId: i.menuItem.id,
+            quantity: i.quantity,
+            unitPrice: i.menuItem.price,
         })),
-      };
+        };
 
-      const order = await createOrder(payload);
+        const order = await createOrder(payload);
 
-      clearCart();
+        // clear giỏ sau khi tạo đơn
+        clearCart();
 
-      Alert.alert(
+        Alert.alert(
         'Đặt hàng thành công',
         `Mã đơn: ${order.id}\nTổng tiền: ${order.totalAmount.toLocaleString('vi-VN')} đ`,
         [
-          {
-            text: 'OK',
+            {
+            text: 'Thanh toán ngay',
+            onPress: () =>
+                navigation.navigate('Payment', {
+                orderId: order.id,
+                totalAmount: order.totalAmount,
+                }),
+            },
+            {
+            text: 'Để sau',
             onPress: () => navigation.navigate('CustomerHome'),
-          },
+            style: 'cancel',
+            },
         ],
-      );
+        );
     } catch (e: any) {
-      console.log(e.response?.data || e.message);
-      Alert.alert('Lỗi', 'Không thể tạo đơn hàng, kiểm tra lại server / kết nối.');
+        console.log(e.response?.data || e.message);
+        Alert.alert('Lỗi', 'Không thể tạo đơn hàng, kiểm tra lại server / kết nối.');
     } finally {
-      setSubmitting(false);
+        setSubmitting(false);
     }
-  };
+    };
+
 
   return (
     <View style={styles.container}>

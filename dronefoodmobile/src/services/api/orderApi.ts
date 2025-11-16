@@ -1,5 +1,5 @@
 import { apiClient } from './client';
-import { OrderItemInput, OrderResponse } from '../../types/api';
+import { OrderItemInput, OrderResponse, Order } from '../../types/api';
 
 interface CreateOrderPayload {
   restaurantId: number;
@@ -9,5 +9,10 @@ interface CreateOrderPayload {
 
 export async function createOrder(payload: CreateOrderPayload) {
   const res = await apiClient.post<OrderResponse>('/orders', payload);
+  return res.data;
+}
+
+export async function getMyOrders() {
+  const res = await apiClient.get<Order[]>('/orders/me');
   return res.data;
 }

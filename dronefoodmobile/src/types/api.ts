@@ -31,3 +31,29 @@ export interface OrderResponse {
   totalAmount: number;
   status: string;
 }
+
+export interface OrderItem {
+  id: number;
+  orderId: number;
+  menuItemId: number;
+  quantity: number;
+  unitPrice: number;
+}
+
+export interface Order {
+  id: number;
+  customerId: number;
+  restaurantId: number;
+  totalAmount: number;
+  status: string;
+  paymentCode?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  restaurant?: {
+    id: number;
+    name: string;
+    address: string;
+  };
+  items?: OrderItem[];
+}
+

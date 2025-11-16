@@ -10,6 +10,7 @@ import {
 } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
+import * as QRCode from 'qrcode';
 
 @Injectable()
 export class PaymentsService {
@@ -58,13 +59,24 @@ export class PaymentsService {
       },
     });
 
+    const qrImage = await this.generateQrCode(paymentCode);
+
     return {
       message: 'Tạo giao dịch thành công',
       paymentId: payment.id,
       paymentCode,          // mã xác nhận thanh toán gửi cho mobile
+      qrImage,              // hình ảnh QR code gửi cho mobile
       method: dto.method,
       amount: dto.amount,
     };
+  }
+
+  async generateQrCode(paymentCode: string) {
+    // const qrData = `PAYMENT:${paymentCode}`;
+    // return await QRCode.toDataURL(qrData);
+    const text = `PAYMENT:${paymentCode}`; // nội dung bên trong QR
+    // Trả về data URL dạng: data:image/png;base64,....
+    return QRCode.toDataURL(text);
   }
 
   // Xác nhận thanh toán bằng mã (mô phỏng callback hoặc user nhập mã)

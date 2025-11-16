@@ -62,9 +62,18 @@ export const CustomerHomeScreen: React.FC<Props> = ({ navigation }) => {
         />
       )}
 
-      <View style={styles.cartButtonContainer}>
+      {/* <View style={styles.cartButtonContainer}>
         <Button title="Xem giỏ hàng" onPress={() => navigation.navigate('Cart')} />
+      </View> */}
+      <View style={styles.footerButtons}>
+        <View style={{ flex: 1, marginRight: 8 }}>
+          <Button title="Xem giỏ hàng" onPress={() => navigation.navigate('Cart')} />
+        </View>
+        <View style={{ flex: 1, marginLeft: 8 }}>
+          <Button title="Đơn của tôi" onPress={() => navigation.navigate('MyOrders')} />
+        </View>
       </View>
+
     </View>
   );
 };
@@ -91,4 +100,9 @@ const styles = StyleSheet.create({
   cartButtonContainer: {
     marginTop: 8,
   },
+  footerButtons: {
+    flexDirection: 'row',
+    marginTop: 8,
+  },
+
 });

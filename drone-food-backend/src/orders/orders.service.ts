@@ -68,8 +68,10 @@ export class OrdersService {
   }
 
   async findMyOrders(user: any) {
+    const currentUserId = Number(user.userId ?? user.id);
+
     return this.prisma.order.findMany({
-      where: { customerId: user.id },
+      where: { customerId: currentUserId },
       include: { restaurant: true, items: true },
       orderBy: { id: 'desc' },
     });
